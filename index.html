@@ -1,46 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<link rel="stylesheet" href="./style.css">
-<title>Weather App</title>
-
+    <title>Weather App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
+    <div class="container">
+        <div class="jumbotron" id="main">
+            <div>
+                <h1 class="weather">Weather Forcasting</h1>
+            </div>
+            <div id="toggle">
+                <input type="text" class="form-control" id="city" placeholder="Enter city name" style="width: 500px; margin-left:290px;">
 
-<div id="main">
-    <div>
-        <h1 class="weather">Weather update</h1>
+                <button class="btn btn-primary" onclick="fetchWeather()">Fetch Weather Data</button>
+            </div>
+            <div class="glass-container">
+                <h1 id="city-name"></h1>
+                <p id="country"></p>
+                <p id="temperature"></p>
+                <p id="humidity"></p>
+                <p id="wind-speed"></p>
+                <p id="description"></p>
+            </div>
+        </div>
     </div>
-  <div id="toggle">
-    <input type="text" id="city" placeholder="Enter city name">
-        <button onclick="fetchWeather()">Fetch Weather</button>
-    </div>
-	<div>
-    <h1 id="city-name"></h1>
-    <p id="country"></p>
-    <p id="temperature"></p>
-    <p id="humidity"></p>
-    <p id="wind-speed"></p>
-    <p id="description"></p>
-     </div>
-</div>
+    
+    <!-- Bootstrap JS and dependencies (Popper.js, jQuery) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
-<script>
-    // Add JavaScript code here
-    async function fetchWeather() {
-		document.getElementById('toggle').style.display = 'none';
-        const city = document.getElementById('city').value;
-        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=8ac5c4d57ba6a4b3dfcf622700447b1e&units=metric`;
+    <script>
+     async function fetchWeather() {
+    const cityInput = document.getElementById('city');
+    const city = cityInput.value.trim();
 
-        try {
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-
-            displayWeather(data);
-        } catch (error) {
-            console.error('Error fetching weather data:', error);
-        }
+    if (!city) {
+        alert('Please enter a city name.');
+        return;
     }
+
+    document.getElementById('toggle').style.display = 'none';
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=8ac5c4d57ba6a4b3dfcf622700447b1e&units=metric`;
+
+    try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        if (response.ok) {
+            displayWeather(data);
+        } else {
+            console.error(`Error fetching weather data: ${data.message}`)
+        }
+    } catch (error) {
+        console.error('Error fetching weather data:', error);
+    }
+}
+
     function displayWeather(data) {
         const cityName = document.getElementById('city-name');
         const country = document.getElementById('country');
@@ -56,7 +78,6 @@
         windSpeed.textContent = `Wind Speed: ${data.wind.speed} m/s`;
         description.textContent = `Description: ${data.weather[0].description}`;
     }
-</script>
-
+    </script>
 </body>
 </html>
